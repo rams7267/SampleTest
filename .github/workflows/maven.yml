@@ -39,6 +39,8 @@ jobs:
       env:
         CHROME_HEADLESS: true
         DISPLAY: :99
+        CHROME_BIN: /usr/bin/google-chrome
+        CHROMEDRIVER_PATH: /usr/local/bin/chromedriver
     
     - name: Upload Test Results
       if: always()
