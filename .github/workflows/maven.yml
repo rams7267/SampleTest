@@ -23,14 +23,13 @@ jobs:
     - name: Set up Chrome
       uses: browser-actions/setup-chrome@v1
     
-    - name: Install Chrome WebDriver
+    - name: Set up ChromeDriver
+      uses: nanasess/setup-chromedriver@v2
+    
+    - name: Start ChromeDriver
       run: |
-        CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
-        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-        wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-        unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/local/bin/
-        sudo chmod +x /usr/local/bin/chromedriver
+        export DISPLAY=:99
+        chromedriver --url-base=/wd/hub &
     
     - name: Build with Maven
       run: mvn clean install
@@ -39,6 +38,7 @@ jobs:
       run: mvn test
       env:
         CHROME_HEADLESS: true
+        DISPLAY: :99
     
     - name: Upload Test Results
       if: always()
