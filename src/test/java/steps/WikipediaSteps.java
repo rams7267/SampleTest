@@ -8,6 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.And;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -17,6 +18,7 @@ import org.openqa.selenium.NoSuchElementException;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import static org.junit.Assert.*;
 import java.time.Duration;
+import java.io.File;
 
 public class WikipediaSteps {
     private WebDriver driver;
@@ -25,7 +27,20 @@ public class WikipediaSteps {
     @Before
     public void setup() {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--remote-debugging-port=9222");
+        
+        // Create a unique user data directory
+        String userDataDir = System.getProperty("java.io.tmpdir") + "/chrome-user-data-" + System.currentTimeMillis();
+        new File(userDataDir).mkdirs();
+        options.addArguments("--user-data-dir=" + userDataDir);
+        
+        driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
     }
